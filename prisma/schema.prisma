@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+enum UserRole{
+   USER 
+   DRIVER
+   ADMIN
+}
+enum Status{
+   ACCEPT
+   REJECT
+   PENDING
+   RENEW
+}
+model User {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String?  @unique
+  name    String?
+  phone   String?
+  phoneverified DateTime?
+  emailVerified DateTime?
+  password String?
+  image String?
+  formfilled Boolean @default(false)
+  role  UserRole @default(USER)
+  accounts Account[]
+  license License[]
+}
+model Driver{
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String?  @unique
+  name    String?
+  phone   String?   @unique
+  phoneverified DateTime?
+  emailVerified DateTime?
+  password String?
+  image String?
+  role  UserRole @default(DRIVER)
+  accounts Account[]
+  users String[]
+}
+model License{
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    userId  String @unique @db.ObjectId
+    firstname String? 
+    lastname String?
+    phone   String? @unique
+    address String?
+    pan     String? @unique
+    dob     DateTime?
+    aadhar String?  @unique
+    expires DateTime?
+    status Status @default(PENDING)
+    user   User   @relation(fields: [userId], references: [id],onDelete:Cascade)
+}
+model Account {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String @db.ObjectId
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.String
+  access_token       String?  @db.String
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.String
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driver Driver  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
