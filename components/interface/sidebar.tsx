@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import DashboardComponent from './userDashLinks';
 import { UserRole } from '@prisma/client';
 import AdminComponent from './admindashboard';
+import DriverComponent from './driverDashboard';
 
 
 const Sidebar = async() => {
@@ -14,7 +15,8 @@ const Sidebar = async() => {
            <Logo w={150} h={150}/>
            <ul className='p-5 w-full'>
            {session?.user.role==='USER' as UserRole?<DashboardComponent/>:
-           session.user.role==='ADMIN' as UserRole?<AdminComponent/>:<></>}
+           session.user.role==='ADMIN' as UserRole?<AdminComponent/>:
+           session.user.role==='DRIVER' as UserRole?<DriverComponent/>:<></>}
            </ul>
      </div>
   )

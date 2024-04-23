@@ -17,6 +17,10 @@ enum Status{
    PENDING
    RENEW
 }
+type CoursePlan{
+   task String
+   completed Boolean
+}
 model User {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String?  @unique
@@ -75,4 +79,10 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   driver Driver  @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([provider, providerAccountId])
+}
+model Course{
+   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+   userId  String @db.ObjectId
+   driverId String @db.ObjectId
+   progress CoursePlan[]
 }

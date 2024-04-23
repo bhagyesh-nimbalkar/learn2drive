@@ -197,3 +197,12 @@ export const getAllRenewLicense = async ()=>{
         return null;
     }
 }
+export const getUserIdList = async ()=>{
+    try {
+        const users = await db.driver.findMany();
+        return users[0].users;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}

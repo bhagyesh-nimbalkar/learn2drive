@@ -87,4 +87,10 @@
     .disable{
        @apply pointer-events-none opacity-50;
     }
+    .map-wrap{
+      @apply relative w-full h-[70%]
+    }
+    .map{
+       @apply absolute w-full h-full
+    }
   }
