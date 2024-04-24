@@ -49,3 +49,12 @@ export const SessionFormSchema = z.object({
         message:"Invalid PAN Number."
     })
 });
+export const courseFormSchema = z.object({
+    items: z.array(z.object({
+      task:z.string(),
+      completed:z.boolean(),
+    })).refine((value) => value.some((item) => item), {
+      message: "You have to select at least one item.",
+    }),
+});
+  

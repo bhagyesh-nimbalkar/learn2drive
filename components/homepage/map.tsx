@@ -1,21 +1,21 @@
 'use client';
-import { useState, useRef } from "react";
+import { useState} from "react";
 import {
   GoogleMap,
   useLoadScript,
   Marker,
-  Autocomplete,
 } from "@react-google-maps/api";
 import { Button } from "../ui/button";
+import { findDrivers, isAccepted, link } from "@/actions/driverActions";
+import { BeatLoader } from "react-spinners";
+import { Status } from "@prisma/client";
 
-const Map: React.FC = () => {
+const Map = ({userId}:{userId:string}) => {
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [searchLngLat, setSearchLngLat] = useState<google.maps.LatLngLiteral | null>(null);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [address, setAddress] = useState<string>("");
+  const [isPending,setPending] = useState(false);
 
-  // laod script for google map
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.GOOGLE_MAP_KEY!,
     libraries: ["places"],
@@ -23,22 +23,32 @@ const Map: React.FC = () => {
 
   if (!isLoaded) return <div>Loading....</div>;
 
-  // static lat and lng
   const center: google.maps.LatLngLiteral = { lat: 13, lng: 15};
 
-  // handle place change on search
-  const handlePlaceChanged = () => {
-    if(!autocompleteRef.current) return null;
-    const place = autocompleteRef.current.getPlace();
-    setSelectedPlace(place);
-    setSearchLngLat({
-      lat: place.geometry?.location.lat(),
-      lng: place.geometry?.location.lng(),
-    });
-    setCurrentLocation(null);
-  };
-
-  // get current location
+  const SearchUsers = async(userId:string)=>{
+     setPending(true);
+     const mytimeout = setTimeout(async()=>{
+        setPending(false);
+        clearTimeout(mytimeout);
+        const res = await isAccepted();
+        if(res?.status==='ACCEPT' as Status){
+            await link();
+        }
+     },1000*15);
+     let totaltime = 0;
+     await findDrivers(userId);
+     const myinterval = setInterval(async()=>{
+       const res = await isAccepted();
+       if(res?.status==='ACCEPT' as Status){
+         clearTimeout(mytimeout);
+         clearInterval(myinterval);
+         await link();
+       }
+       if(totaltime>1000*15) clearInterval(myinterval);
+       totaltime += 1000*3;
+     },1000*3);
+  }
+  
   const handleGetLocationClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -57,8 +67,7 @@ const Map: React.FC = () => {
     }
   };
 
-  // on map load
-  const onMapLoad = (map: google.maps.Map<Element>) => {
+  const onMapLoad = (map: google.maps.Map) => {
     const controlDiv = document.createElement("div");
     const controlUI = document.createElement("div");
     controlUI.innerHTML = "Get Location";
@@ -96,7 +105,7 @@ const Map: React.FC = () => {
         {currentLocation && <Marker position={currentLocation} />}
       </GoogleMap>
     </div>
-    {currentLocation && <Button className='z-50 bottom-20 absolute'>Find Nearby Drivers</Button>}
+    {currentLocation && <form action={()=>SearchUsers(userId)}><Button type="submit" className='z-50 bottom-20 absolute text-white'>{isPending?<BeatLoader/>:"Find Nearby Drivers"}</Button></form>}
 </div>
   );
 };

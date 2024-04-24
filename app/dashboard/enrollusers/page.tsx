@@ -1,10 +1,12 @@
 import React from "react";
-import {getUserById, getUserIdList} from "@/data/user";
+import {getCourse, getUserById} from "@/data/user";
 import NotFound from "@/components/homepage/not-found";
 import Navbar from "@/components/interface/navbar";
-import { User } from "@prisma/client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { CourseForm } from "@/components/interface/courseForm";
+import { auth } from "@/auth";
+import { User } from "@prisma/client";
 
 const DisplayCard = async({label,text}:{label:string,text:string | undefined})=>{
     return (
@@ -15,22 +17,23 @@ const DisplayCard = async({label,text}:{label:string,text:string | undefined})=>
     )
   }
 export default async function EnrollUser() {
-  const usersList = await getUserIdList();
-  if(!usersList) return <NotFound/>;
-  const users:User[] = [];
-  for(let i=0;i<usersList.length;i++)
-    {
-         const use = await getUserById(usersList[i].toString());
-         if(use) users.push(use);
-    }
-    if(!users) return <NotFound/>;
+  const session = await auth();
+  if(!session) return null;
+  const courses = await getCourse(session?.user.id.toString());
+    if(!courses) return <NotFound/>;
+    const users:User[] = [];
+    for(let i=0;i<courses.length;i++)
+      {
+          const usr = await getUserById(courses[i].userId.toString());
+          if(usr) users.push(usr);
+      }
     return (
     <div className="w-full h-full flex flex-col">
         <Navbar/>
     <div className='w-full h-full p-10'>
     <Card className='shadow-lg'>
       <CardHeader>
-                <h1 className='font-semibold text-xl '>All License Requests</h1> 
+                <h1 className='font-semibold text-xl '>All Enrolled Users</h1> 
       </CardHeader>
       <CardContent>
         {
@@ -44,6 +47,9 @@ export default async function EnrollUser() {
                            <DisplayCard label="Name" text={ele.name?.toString()}/>
                            <DisplayCard label="Phone" text={ele.phone?.toString()}/>
                            <DisplayCard label="Email" text={ele.email?.toString()}/>
+                    </div>
+                    <div>
+                         <CourseForm items={courses[index].progress} userId={courses[index].userId} driverId={courses[index].driverId}/>
                     </div>
               </AccordionContent>
             </AccordionItem>

@@ -184,6 +184,20 @@ export const getAllLicense = async ()=>{
         return null;
     }
 }
+export const getEnrollRequests = async (driverId:string)=>{
+    try {
+        const users = await db.verificationToken.findMany({
+            where:{
+                 status:"PENDING" as Status,
+                 driverId
+            }
+        });
+        return users;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
 export const getAllRenewLicense = async ()=>{
     try {
         const users = await db.license.findMany({
@@ -197,10 +211,14 @@ export const getAllRenewLicense = async ()=>{
         return null;
     }
 }
-export const getUserIdList = async ()=>{
+export const getCourse = async(driverId:string)=>{
     try {
-        const users = await db.driver.findMany();
-        return users[0].users;
+        const users = await db.course.findMany({
+            where:{
+                driverId
+            }
+        });
+        return users;
     } catch (error) {
         console.log(error);
         return null;

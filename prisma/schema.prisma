@@ -82,7 +82,15 @@ model Account {
 }
 model Course{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-   userId  String @db.ObjectId
-   driverId String @db.ObjectId
+   userId  String @unique @db.ObjectId
+   driverId String @unique @db.ObjectId
    progress CoursePlan[]
+}
+
+model verificationToken{
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    expires DateTime 
+    status  Status  @default(PENDING)
+    driverId String @unique @db.ObjectId
+    userId String @unique @db.ObjectId
 }
