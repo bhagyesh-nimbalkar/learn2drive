@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 const FormSession = async() => {
   const session = await auth();
   const User = await getUserById(session?.user.id.toString());
-  if(User && User.formfilled) redirect('/dashboard/session');
+  if(User && User.formfilled) redirect('/dashboard/session/map');
   return (
     <div className='flex flex-col w-full'>
          <Navbar/>

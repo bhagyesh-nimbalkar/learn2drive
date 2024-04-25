@@ -32,7 +32,7 @@ const Pricingcard = ({price,duration,benefits}:{price:string,duration:string,ben
         </ul>
       </div>
       <div className="mt-8">
-      <Link href={`/api/checkout/?amount=${price}`}>
+      <Link href={`/dashboard/session/map`}>
         <Button  className="w-full rounded-lg bg-black px-3 py-2 text-base font-medium text-white hover:bg-gray-800">Subscribe</Button>
       </Link>
       </div>

@@ -49,10 +49,7 @@ export function CourseForm({items,userId,driverId}:{items:Course[],userId:string
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>
-                  Select the items you want to display in the sidebar.
-                </FormDescription>
+                <FormLabel className="text-base">Course Progress</FormLabel>
               </div>
               {items.map((item,index) => (
                 <FormField
@@ -68,8 +65,8 @@ export function CourseForm({items,userId,driverId}:{items:Course[],userId:string
                         <FormControl>
                           <Checkbox
                             checked={item.completed}
-                            onCheckedChange={(checked) => {
-                              return !checked
+                            onChange={()=>{
+                                field.value[index].completed = !field.value[index].completed;
                             }}
                           />
                         </FormControl>

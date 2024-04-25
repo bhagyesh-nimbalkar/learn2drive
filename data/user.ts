@@ -224,3 +224,45 @@ export const getCourse = async(driverId:string)=>{
         return null;
     }
 }
+export const getverificationToken = async()=>{
+    try {
+        const users = await db.verificationToken.findFirst();
+        return users;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+export const getExpiryTime = async () =>{
+    try {
+         const time = await db.verificationToken.findFirst();
+         if(!time) return null;
+         return time.expires;
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const getAllCourses = async()=>{
+    try {
+         const courses = await db.course.findMany({
+            where:{
+                 payment:true
+            }
+         });
+         return courses;
+   } catch (error) {
+       console.log(error);
+   }
+}
+export const isCourseAvailable = async(userId:string)=>{
+    try {
+         const courses = await db.course.findUnique({
+            where:{
+                 userId
+            }
+         });
+         return courses;
+   } catch (error) {
+       console.log(error);
+   }
+}

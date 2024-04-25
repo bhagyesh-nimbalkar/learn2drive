@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { db } from '@/lib/db';
+import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 
 const generatedSignature = (
  razorpayOrderId: string,
@@ -30,6 +33,16 @@ export async function POST(request: NextRequest) {
    { status: 400 }
   );
  }
+ const session = await auth();
+ await db.course.update({
+    where:{
+        userId:session?.user.id.toString()
+    },
+    data:{
+        payment:true
+    }
+ });
+ redirect('/dashboard/overview');
  return NextResponse.json(
   { message: 'payment verified successfully', isOk: true },
   { status: 200 }

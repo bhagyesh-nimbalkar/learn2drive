@@ -85,8 +85,8 @@ model Course{
    userId  String @unique @db.ObjectId
    driverId String @unique @db.ObjectId
    progress CoursePlan[]
+   payment Boolean @default(false)
 }
-
 model verificationToken{
     id      String   @id @default(auto()) @map("_id") @db.ObjectId
     expires DateTime 

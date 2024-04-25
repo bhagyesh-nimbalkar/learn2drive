@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
+import AcceptDriverForm from "@/components/homepage/acceptDriverForm";
 import AcceptForm from "@/components/homepage/acceptForm";
 import NotFound from "@/components/homepage/not-found";
+import RejectDriverForm from "@/components/homepage/rejectDriverForm";
 import RejectForm from "@/components/homepage/rejectForm";
 import Navbar from "@/components/interface/navbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
@@ -48,8 +50,8 @@ const ReqestPage = async() => {
                            <DisplayCard label="Status" text={ele.status}/>
                     </div>
                  {ele.status==='PENDING' as Status &&  <div className='w-full flex justify-end items-center gap-3'>
-                      <AcceptForm id={ele.id}/>
-                      <RejectForm id={ele.id}/>
+                      <AcceptDriverForm userId={ele.userId} driverId={ele.driverId} />
+                      <RejectDriverForm driverId={ele.driverId} />
                 </div>}
               </AccordionContent>
             </AccordionItem>

@@ -1,14 +1,16 @@
 import { auth } from '@/auth';
 import Navbar from '@/components/interface/navbar';
 import Pricingcard from '@/components/interface/pricingcard';
-import { getUserById } from '@/data/user';
+import { isCourseAvailable } from '@/data/user';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
 const SessionPage = async () => {
   const session = await auth();
-  const User = await getUserById(session?.user.id.toString());
-  if(User && !User.formfilled) redirect('/dashboard/session/formsession');
+  if(!session) return null;
+  const course = await isCourseAvailable(session?.user.id.toString());
+  if(!course) redirect('/dashboard/session/map');
+  if(course && course.payment) redirect('/dashboard/overview');
   return (
   <div className='w-full h-full flex flex-col'>
    <Navbar/>

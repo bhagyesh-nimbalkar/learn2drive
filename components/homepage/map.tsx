@@ -6,11 +6,13 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import { Button } from "../ui/button";
-import { findDrivers, isAccepted, link } from "@/actions/driverActions";
+import { findDrivers, isAccepted, link, unlink } from "@/actions/driverActions";
 import { BeatLoader } from "react-spinners";
 import { Status } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 const Map = ({userId}:{userId:string}) => {
+  const router = useRouter();
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [searchLngLat, setSearchLngLat] = useState<google.maps.LatLngLiteral | null>(null);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
@@ -30,11 +32,8 @@ const Map = ({userId}:{userId:string}) => {
      const mytimeout = setTimeout(async()=>{
         setPending(false);
         clearTimeout(mytimeout);
-        const res = await isAccepted();
-        if(res?.status==='ACCEPT' as Status){
-            await link();
-        }
-     },1000*15);
+        await unlink();
+     },1000*60);
      let totaltime = 0;
      await findDrivers(userId);
      const myinterval = setInterval(async()=>{
@@ -43,8 +42,9 @@ const Map = ({userId}:{userId:string}) => {
          clearTimeout(mytimeout);
          clearInterval(myinterval);
          await link();
+         router.push('/dashboard/session');
        }
-       if(totaltime>1000*15) clearInterval(myinterval);
+       if(totaltime>1000*60) clearInterval(myinterval);
        totaltime += 1000*3;
      },1000*3);
   }
