@@ -33,7 +33,7 @@ const Map = ({userId}:{userId:string}) => {
         setPending(false);
         clearTimeout(mytimeout);
         await unlink();
-     },1000*60);
+     },1000*180);
      let totaltime = 0;
      await findDrivers(userId);
      const myinterval = setInterval(async()=>{
@@ -44,7 +44,7 @@ const Map = ({userId}:{userId:string}) => {
          await link();
          router.push('/dashboard/session');
        }
-       if(totaltime>1000*60) clearInterval(myinterval);
+       if(totaltime>1000*180) clearInterval(myinterval);
        totaltime += 1000*3;
      },1000*3);
   }

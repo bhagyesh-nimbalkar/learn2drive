@@ -40,4 +40,5 @@ export default {
       clientSecret:process.env.DISCORD_CLIENT_SECRET,
    })
   ],
+  trustHost:true,
 } satisfies NextAuthConfig;

@@ -9,14 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { courseFormSchema } from "@/schemas"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { courseformupdate } from "@/actions/driverActions"
 import { BeatLoader } from "react-spinners"
 
@@ -27,6 +26,7 @@ interface Course{
 }
 export function CourseForm({items,userId,driverId}:{items:Course[],userId:string,driverId:string}) {
   const [isPending,startTransition] = useTransition();
+  const [courses,setCourses] = useState<Course[]>(items);
   const form = useForm<z.infer<typeof courseFormSchema>>({
     resolver: zodResolver(courseFormSchema),
     defaultValues: {
@@ -51,7 +51,7 @@ export function CourseForm({items,userId,driverId}:{items:Course[],userId:string
               <div className="mb-4">
                 <FormLabel className="text-base">Course Progress</FormLabel>
               </div>
-              {items.map((item,index) => (
+              {courses.map((item,index) => (
                 <FormField
                   key={index}
                   control={form.control}
@@ -63,10 +63,18 @@ export function CourseForm({items,userId,driverId}:{items:Course[],userId:string
                         className="flex flex-row items-start space-x-3 space-y-0"
                       >
                         <FormControl>
-                          <Checkbox
-                            checked={item.completed}
-                            onChange={()=>{
-                                field.value[index].completed = !field.value[index].completed;
+                          <input type="checkbox"
+                            checked={field.value?.includes({task:item.task,completed:true})}
+                            onChange={() => {
+                              console.log("Inside on CHange");
+                              const updatedCourses = courses.map((course,ind)=> {
+                                if (ind===index) {
+                                   return { ...course, completed: !course.completed };
+                                } else {
+                                   return course;
+                                }
+                             });
+                             setCourses(updatedCourses);
                             }}
                           />
                         </FormControl>

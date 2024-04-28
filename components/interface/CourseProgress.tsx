@@ -1,4 +1,5 @@
 
+'use client';
 import { useEffect, useState } from "react";
 import { Card, CardHeader,CardContent} from "../ui/card";
 import { Progress } from "@/components/ui/progress"
@@ -10,9 +11,11 @@ type Progress = {
     completed:boolean,
 }
 const SingleCell = ({ele}:{ele:Progress})=>{
-     return <div className='flex w-full justify-between p-5 '>
-         <TiTick className={`${ele.completed?'bg-green-500':'bg-slate-500'} text-white text-lg p-3 rounded-full`}/>
-         <h1 className='font-semibold text-lg italic'>{ele.task}</h1>
+     return <div className='flex w-full gap-3 p-1'>
+         <div className={`p-1 ${ele.completed?'bg-green-300':'bg-stone-300'} text-white rounded-full flex justify-center items-center`}>
+                 <TiTick size="2vh"/>
+            </div>
+         <h1 className='font-semibold text-lg text-left italic'>{ele.task}</h1>
      </div>
 }
 const CourseProgress = ({course}:{course:Progress[]}) => {
@@ -29,13 +32,18 @@ const CourseProgress = ({course}:{course:Progress[]}) => {
   return (
     <div className='w-full h-full flex justify-center items-center'>
          <Card>
-              <CardHeader>Course Progress</CardHeader>
-              <CardContent>
+              <CardHeader className='text-xl font-bold'>Course Progress</CardHeader>
+              <CardContent className='flex flex-col gap-10'>
+              <div className='w-full justify-start items-center flex gap-3'>
                 <Progress value={progress} className="w-[60%]" />
+                <h1>{progress}%</h1>
+              </div>
                 <Divider/>
+                <div className='flex flex-col w-full'>
                 {course.map((ele,index)=>{
                     return <SingleCell key={index} ele={ele}/>;
                 })}
+              </div>
               </CardContent>
          </Card>
     </div>
